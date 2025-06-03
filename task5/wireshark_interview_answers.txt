@@ -1,0 +1,337 @@
+WIRESHARK INTERVIEW QUESTIONS AND ANSWERS
+==========================================
+
+QUESTION 1: What is Wireshark used for?
+========================================
+
+ANSWER:
+Wireshark is a free, open-source network protocol analyzer used for:
+
+• Network Troubleshooting: Diagnosing network connectivity issues, slow performance, and packet loss
+• Security Analysis: Detecting malicious traffic, intrusion attempts, and security vulnerabilities
+• Protocol Development: Testing and debugging network protocols during development
+• Network Performance Monitoring: Analyzing bandwidth usage, latency, and throughput
+• Educational Purposes: Learning about network protocols and how data flows across networks
+• Forensic Analysis: Investigating network incidents and gathering evidence
+• Quality Assurance: Testing network applications and services
+• Compliance Monitoring: Ensuring network traffic adheres to organizational policies
+
+Key Features:
+- Real-time packet capture and analysis
+- Support for hundreds of protocols
+- Powerful filtering and search capabilities
+- Cross-platform compatibility (Windows, macOS, Linux)
+- Detailed packet inspection at all OSI layers
+
+QUESTION 2: What is a packet?
+=============================
+
+ANSWER:
+A packet is a formatted unit of data carried across a network. It contains:
+
+STRUCTURE:
+• Header: Contains control information (source/destination addresses, protocol type, sequence numbers)
+• Payload/Data: The actual information being transmitted
+• Footer/Trailer: Error detection information (in some protocols)
+
+KEY CHARACTERISTICS:
+• Size: Typically 64 bytes to 1500 bytes (MTU - Maximum Transmission Unit)
+• Independence: Each packet can take different routes to reach destination
+• Reassembly: Packets are reassembled at destination to reconstruct original data
+• Protocol-specific: Different protocols add their own headers
+
+PACKET LAYERS (OSI Model):
+- Physical Layer: Electrical signals
+- Data Link Layer: Ethernet frames with MAC addresses  
+- Network Layer: IP headers with IP addresses
+- Transport Layer: TCP/UDP headers with port numbers
+- Application Layer: HTTP, DNS, FTP data
+
+EXAMPLE:
+When you visit a website, your request is broken into multiple packets, each containing part of the data plus routing information to reach the web server.
+
+QUESTION 3: How to filter packets in Wireshark?
+===============================================
+
+ANSWER:
+Wireshark offers multiple filtering methods:
+
+DISPLAY FILTERS (Most Common):
+• Protocol Filtering:
+  - dns (show only DNS traffic)
+  - http (show only HTTP traffic)
+  - tcp (show only TCP packets)
+  - udp (show only UDP packets)
+
+• IP Address Filtering:
+  - ip.addr == 192.168.1.1 (traffic to/from specific IP)
+  - ip.src == 10.0.0.1 (traffic from specific source)
+  - ip.dst == 8.8.8.8 (traffic to specific destination)
+
+• Port Filtering:
+  - tcp.port == 80 (HTTP traffic)
+  - udp.port == 53 (DNS traffic)
+  - tcp.srcport == 443 (HTTPS from source)
+
+• Logical Operators:
+  - and: dns and ip.addr == 8.8.8.8
+  - or: tcp or udp
+  - not: not arp
+
+CAPTURE FILTERS (Applied during capture):
+• host 192.168.1.1 (capture traffic to/from specific host)
+• port 80 (capture only HTTP traffic)
+• net 192.168.0.0/24 (capture traffic from specific network)
+
+ADVANCED FILTERING:
+• Right-click packets → Apply as Filter
+• Use autocomplete in filter bar
+• Save frequently used filters
+• Combine multiple conditions with parentheses
+
+QUESTION 4: What is the difference between TCP and UDP?
+=======================================================
+
+ANSWER:
+
+TCP (Transmission Control Protocol):
+=====================================
+CHARACTERISTICS:
+• Connection-oriented: Establishes connection before data transfer
+• Reliable: Guarantees packet delivery and order
+• Error Detection/Correction: Automatic retransmission of lost packets
+• Flow Control: Manages data transmission rate
+• Congestion Control: Adjusts to network conditions
+
+FEATURES:
+• Three-way handshake (SYN, SYN-ACK, ACK)
+• Sequence numbers for ordering
+• Acknowledgments for confirmation
+• Higher overhead due to control mechanisms
+
+USE CASES:
+• Web browsing (HTTP/HTTPS)
+• Email (SMTP, POP3, IMAP)
+• File transfer (FTP)
+• Remote access (SSH, Telnet)
+
+UDP (User Datagram Protocol):
+============================
+CHARACTERISTICS:
+• Connectionless: No connection establishment required
+• Unreliable: No guarantee of packet delivery or order
+• No Error Correction: No automatic retransmission
+• Minimal overhead: Faster transmission
+• Fire-and-forget approach
+
+FEATURES:
+• Simple header structure
+• No acknowledgments
+• No flow control
+• Lower latency
+
+USE CASES:
+• DNS queries
+• Live streaming (video/audio)
+• Online gaming
+• DHCP
+• SNMP
+
+COMPARISON SUMMARY:
+TCP: Reliable, slower, connection-based (like registered mail)
+UDP: Fast, unreliable, connectionless (like regular mail)
+
+QUESTION 5: What is a DNS query packet?
+=======================================
+
+ANSWER:
+A DNS query packet is a request sent to a DNS server to resolve domain names to IP addresses.
+
+STRUCTURE:
+• Header: Transaction ID, flags, question count, answer count
+• Question Section: Domain name to resolve, query type (A, AAAA, MX, etc.)
+• Answer Section: (empty in queries, filled in responses)
+• Authority Section: Information about authoritative servers
+• Additional Section: Extra helpful information
+
+QUERY TYPES:
+• A Record: IPv4 address lookup (most common)
+• AAAA Record: IPv6 address lookup
+• MX Record: Mail server lookup
+• CNAME Record: Canonical name lookup
+• PTR Record: Reverse DNS lookup
+• NS Record: Name server lookup
+
+PROCESS:
+1. Application needs to resolve www.example.com
+2. DNS query packet created with domain name
+3. Packet sent to configured DNS server (usually UDP port 53)
+4. DNS server responds with IP address
+5. Application uses IP address to connect
+
+WIRESHARK ANALYSIS:
+• Filter: dns
+• Shows query and response pairs
+• Transaction ID matches query to response
+• Response time indicates DNS performance
+• Can identify DNS issues and misconfigurations
+
+EXAMPLE FIELDS:
+- Query Name: www.google.com
+- Query Type: A (IPv4 address)
+- Response: 142.250.191.14
+
+QUESTION 6: How can packet capture help in troubleshooting?
+===========================================================
+
+ANSWER:
+Packet capture provides detailed network visibility for effective troubleshooting:
+
+CONNECTIVITY ISSUES:
+• Identify packet loss: Missing acknowledgments, retransmissions
+• Trace routing problems: TTL expiration, ICMP unreachable messages
+• Detect network congestion: High latency, dropped packets
+• Verify physical layer issues: Malformed frames, CRC errors
+
+PERFORMANCE PROBLEMS:
+• Analyze response times: Time between request and response
+• Identify bottlenecks: Slow servers, network delays
+• Monitor bandwidth usage: High-volume transfers, bandwidth hogs
+• Detect inefficient protocols: Excessive overhead, poor implementations
+
+APPLICATION TROUBLESHOOTING:
+• HTTP errors: 404, 500 status codes in web traffic
+• Database issues: SQL query timeouts, connection problems
+• Email problems: SMTP delivery failures, authentication issues
+• DNS resolution: Failed lookups, slow responses
+
+SECURITY INVESTIGATIONS:
+• Detect malicious traffic: Port scans, unusual connections
+• Identify compromised systems: Unexpected outbound traffic
+• Analyze attack patterns: DDoS traffic, exploitation attempts
+• Verify security controls: Firewall effectiveness, access controls
+
+TROUBLESHOOTING METHODOLOGY:
+1. Define the problem clearly
+2. Capture traffic at strategic points
+3. Apply appropriate filters
+4. Analyze packet flows and timing
+5. Identify anomalies and patterns
+6. Correlate with other monitoring data
+7. Implement and verify solutions
+
+BENEFITS:
+• Objective evidence of network behavior
+• Root cause identification
+• Real-time problem detection
+• Historical analysis capabilities
+• Vendor-neutral troubleshooting
+
+QUESTION 7: What is a protocol?
+===============================
+
+ANSWER:
+A protocol is a set of rules and standards that define how devices communicate over a network.
+
+DEFINITION:
+Protocols establish the format, timing, sequencing, and error control for data exchange between network devices.
+
+KEY FUNCTIONS:
+• Data Format: How information is structured and encoded
+• Addressing: How devices identify each other
+• Routing: How data finds its path through networks
+• Error Detection: How mistakes in transmission are found
+• Error Correction: How transmission errors are fixed
+• Flow Control: How data transmission rate is managed
+
+PROTOCOL STACK (OSI Model):
+• Layer 7 - Application: HTTP, HTTPS, FTP, SMTP, DNS
+• Layer 6 - Presentation: SSL/TLS, encryption, compression
+• Layer 5 - Session: NetBIOS, RPC, SQL sessions
+• Layer 4 - Transport: TCP, UDP
+• Layer 3 - Network: IP, ICMP, OSPF, BGP
+• Layer 2 - Data Link: Ethernet, PPP, Wi-Fi
+• Layer 1 - Physical: Cable standards, wireless frequencies
+
+COMMON PROTOCOLS:
+• HTTP/HTTPS: Web browsing
+• TCP/IP: Internet communication foundation
+• DNS: Domain name resolution
+• DHCP: Automatic IP address assignment
+• SMTP/POP3/IMAP: Email communication
+• FTP/SFTP: File transfer
+• SSH: Secure remote access
+
+PROTOCOL CHARACTERISTICS:
+• Standardized: Defined by organizations (IEEE, IETF, RFC)
+• Interoperable: Different vendors' equipment can communicate
+• Layered: Each layer provides services to the layer above
+• Modular: Can be replaced or upgraded independently
+
+IMPORTANCE:
+Without protocols, network devices couldn't understand each other - like people trying to communicate without a common language.
+
+QUESTION 8: Can Wireshark decrypt encrypted traffic?
+====================================================
+
+ANSWER:
+Wireshark has LIMITED capabilities to decrypt encrypted traffic under specific conditions:
+
+WHAT WIRESHARK CAN DECRYPT:
+============================
+
+WEP (Wired Equivalent Privacy):
+• Can decrypt if WEP key is provided
+• WEP is considered broken and easily crackable
+• Requires pre-shared key configuration in Wireshark
+
+WPA/WPA2 (Wi-Fi Protected Access):
+• Can decrypt if you have:
+  - Pre-shared key (PSK)
+  - Complete 4-way handshake capture
+  - Proper configuration in Wireshark
+
+SSL/TLS:
+• Can decrypt ONLY if you have:
+  - Private key of the server
+  - Pre-master secret
+  - Session keys (very rare)
+
+WHAT WIRESHARK CANNOT DECRYPT:
+===============================
+
+Modern Encryption:
+• WPA3 (latest Wi-Fi security)
+• Modern TLS 1.3 with perfect forward secrecy
+• VPN traffic (IPSec, OpenVPN)
+• End-to-end encrypted messaging
+• Modern HTTPS without private keys
+
+LIMITATIONS:
+============
+• Perfect Forward Secrecy: Even with private keys, each session uses unique keys
+• Strong Encryption: AES-256, modern algorithms are computationally infeasible to break
+• No Access to Keys: Most real-world scenarios don't provide decryption keys
+• Legal/Ethical: Decrypting others' traffic may be illegal
+
+WHAT WIRESHARK CAN ANALYZE (Without Decryption):
+================================================
+• Traffic patterns and metadata
+• Connection timing and frequency
+• Encrypted protocol identification
+• Network behavior analysis
+• Performance metrics
+• Handshake processes
+
+PRACTICAL REALITY:
+==================
+In most real-world scenarios, Wireshark cannot decrypt modern encrypted traffic. Its primary value is in:
+• Analyzing unencrypted protocols
+• Understanding network behavior
+• Troubleshooting connectivity issues
+• Examining protocol headers and metadata
+
+SECURITY NOTE:
+==============
+The inability to easily decrypt modern encryption is actually a good thing - it means your encrypted communications are secure from passive eavesdropping.
+
